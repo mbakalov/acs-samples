@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { CommonCallAdapter, CallComposite } from '@azure/communication-react';
+import { CommonCallAdapter, CallComposite, CallCompositeOptions, CustomCallControlButtonCallbackArgs, CustomCallControlButtonProps } from '@azure/communication-react';
 
 import { Spinner } from '@fluentui/react';
 import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvider';
@@ -32,6 +32,24 @@ export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.
 
   const callInvitationUrl: string | undefined = window.location.href;
 
+  const options: CallCompositeOptions = {
+    callControls: {
+      onFetchCustomButtonProps: [
+        (_args: CustomCallControlButtonCallbackArgs): CustomCallControlButtonProps => {
+          return {
+            showLabel: true,
+            iconName: 'Record2',
+            text: 'Record',
+            'placement': 'overflow',
+            onItemClick: () => {
+              alert('Recording started!')
+            }
+          }
+        }
+      ]
+    }
+  }
+
   return (
     <CallComposite
       adapter={adapter}
@@ -39,6 +57,7 @@ export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.
       rtl={currentRtl}
       callInvitationUrl={callInvitationUrl}
       formFactor={isMobileSession ? 'mobile' : 'desktop'}
+      options={options}
     />
   );
 };
