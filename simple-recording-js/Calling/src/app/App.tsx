@@ -139,9 +139,11 @@ const App = (): JSX.Element => {
 const getJoinParams = (locator: CallAdapterLocator): string => {
   if ('meetingLink' in locator) {
     return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
+  } else if ('groupId' in locator) {
+    return '?groupId=' + encodeURIComponent(locator.groupId);
   }
 
-  return '?groupId=' + encodeURIComponent(locator.groupId);
+  return 'unsupported'; // TODO
 };
 
 export default App;
