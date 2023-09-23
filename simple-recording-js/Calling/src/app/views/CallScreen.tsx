@@ -14,6 +14,7 @@ import {
 
 import React, { useEffect, useRef, useState } from 'react';
 import { createAutoRefreshingCredential } from '../utils/credential';
+import { startRecording } from '../utils/recording';
 import { WEB_APP_TITLE } from '../utils/AppUtils';
 import { CallCompositeContainer } from './CallCompositeContainer';
 
@@ -87,7 +88,13 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
     createAdapter();
   }, [token]);
 
-  return <CallCompositeContainer adapter={callAdapter} />;
+  const handleRecordClicked = async (): Promise<void> => {
+    if (serverCallId) {
+      await startRecording(serverCallId);
+    }
+  }
+
+  return <CallCompositeContainer adapter={callAdapter} onRecordButtonClicked={handleRecordClicked} />;
 };
 
 const convertPageStateToString = (state: CallAdapterState): string => {

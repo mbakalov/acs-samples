@@ -9,7 +9,8 @@ import { useIsMobile } from '../utils/useIsMobile';
 import React, { useEffect } from 'react';
 
 export type CallCompositeContainerProps = { 
-  adapter?: CommonCallAdapter
+  adapter?: CommonCallAdapter,
+  onRecordButtonClicked: () => Promise<void>
 };
 
 export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.Element => {
@@ -41,9 +42,7 @@ export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.
             iconName: 'Record2',
             text: 'Record',
             'placement': 'overflow',
-            onItemClick: () => {
-              alert('Recording started!')
-            }
+            onItemClick: props.onRecordButtonClicked
           }
         }
       ]
