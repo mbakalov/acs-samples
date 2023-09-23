@@ -6,7 +6,8 @@ import { CommunicationUserIdentifier } from '@azure/communication-common';
 import {
   CallAdapterLocator,
   CallAdapterState,
-  createAzureCommunicationCallAdapter,
+  createStatefulCallClient,
+  createAzureCommunicationCallAdapterFromClient,
   CallAdapter,
   toFlatCommunicationIdentifier
 } from '@azure/communication-react';
@@ -29,6 +30,7 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
   const callIdRef = useRef<string>();
 
   const [callAdapter, setCallAdapter] = useState<CallAdapter | undefined>(undefined);
+  const [serverCallId, setServerCallId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const createAdapter = async (): Promise<void> => {
@@ -38,11 +40,20 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
         token);
       
       const locator = callLocator;
-      const adapter = await createAzureCommunicationCallAdapter({
-        userId,
-        displayName,
+
+      const callClient = createStatefulCallClient({
+        userId
+      });
+
+      const callAgent = await callClient.createCallAgent(
         credential,
-        locator});
+        { displayName }
+      );
+
+      const adapter = await createAzureCommunicationCallAdapterFromClient(
+        callClient,
+        callAgent,
+        locator);
 
       adapter.on('error', (e) => {
         // Error is already acted upon by the Call composite, but the surrounding application could
@@ -54,9 +65,19 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
         const pageTitle = convertPageStateToString(state);
         document.title = `${pageTitle} - ${WEB_APP_TITLE}`;
   
-        if (state?.call?.id && callIdRef.current !== state?.call?.id) {
-          callIdRef.current = state?.call?.id;
-          console.log(`Call Id: ${callIdRef.current}`);
+        if (state.call?.state == 'Connected') {
+          const isNewCall = state?.call?.id && callIdRef.current !== state?.call?.id;
+          
+          if (isNewCall) {
+            const thisCall = callAgent.calls.find(c => c.id == state?.call?.id);
+            thisCall?.info.getServerCallId().then((serverCallId) => {
+              setServerCallId(serverCallId);
+              console.log('Server call Id:', serverCallId);
+            });
+
+            callIdRef.current = state?.call?.id;
+            console.log(`Call Id: ${callIdRef.current}`);
+          }
         }
       });
 
@@ -65,8 +86,6 @@ export const CallScreen = (props: CallScreenProps): JSX.Element => {
 
     createAdapter();
   }, [token]);
-
-  console.log('Rendering callcompositecontaier, adapter is undefined=', !callAdapter);
 
   return <CallCompositeContainer adapter={callAdapter} />;
 };
