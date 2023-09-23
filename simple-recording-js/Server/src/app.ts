@@ -14,6 +14,7 @@ import getEndpointUrl from './routes/getEndpointUrl';
 import userConfig from './routes/userConfig';
 import createThread from './routes/createThread';
 import addUser from './routes/addUser';
+import recordings from './routes/recordings';
 
 const app = express();
 
@@ -58,6 +59,12 @@ app.use('/token', cors(), issueToken);
  * purpose: Chat: to add user details to userconfig for chat thread
  */
 app.use('/userConfig', cors(), userConfig);
+
+/**
+ * route: /userConfig
+ * purpose: Recording: start and stop recordings
+ */
+app.use('/recordings', cors(), recordings);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
