@@ -10,10 +10,6 @@ import path from 'path';
 
 import issueToken from './routes/issueToken';
 import refreshToken from './routes/refreshToken';
-import getEndpointUrl from './routes/getEndpointUrl';
-import userConfig from './routes/userConfig';
-import createThread from './routes/createThread';
-import addUser from './routes/addUser';
 import recordings from './routes/recordings';
 import eventgrid from './routes/eventgrid';
 
@@ -25,44 +21,21 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.resolve(__dirname, 'build')));
 
-/**
- * route: /createThread
- * purpose: Chat: create a new chat thread
- */
-app.use('/createThread', cors(), createThread);
-
-/**
- * route: /addUser
- * purpose: Chat: add the user to the chat thread
- */
-app.use('/addUser', cors(), addUser);
 
 /**
  * route: /refreshToken
- * purpose: Chat,Calling: get a new token
+ * purpose: Calling: get a new token
  */
 app.use('/refreshToken', cors(), refreshToken);
 
 /**
- * route: /getEndpointUrl
- * purpose: Chat,Calling: get the endpoint url of ACS resource
- */
-app.use('/getEndpointUrl', cors(), getEndpointUrl);
-
-/**
  * route: /token
- * purpose: Chat,Calling: get ACS token with the given scope
+ * purpose: Calling: get ACS token with the given scope
  */
 app.use('/token', cors(), issueToken);
 
 /**
- * route: /userConfig
- * purpose: Chat: to add user details to userconfig for chat thread
- */
-app.use('/userConfig', cors(), userConfig);
-
-/**
- * route: /userConfig
+ * route: /recordings
  * purpose: Recording: start and stop recordings
  */
 app.use('/recordings', cors(), recordings);
