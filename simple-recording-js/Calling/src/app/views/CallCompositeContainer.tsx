@@ -8,9 +8,9 @@ import { useSwitchableFluentTheme } from '../theming/SwitchableFluentThemeProvid
 import { useIsMobile } from '../utils/useIsMobile';
 import React, { useEffect } from 'react';
 
-import { CallScreenProps } from './CallScreen';
-
-export type CallCompositeContainerProps = CallScreenProps & { adapter?: CommonCallAdapter };
+export type CallCompositeContainerProps = { 
+  adapter?: CommonCallAdapter
+};
 
 export const CallCompositeContainer = (props: CallCompositeContainerProps): JSX.Element => {
   const { adapter } = props;

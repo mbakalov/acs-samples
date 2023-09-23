@@ -125,9 +125,7 @@ const App = (): JSX.Element => {
         return <Spinner label={'Getting user credentials from server'} ariaLive="assertive" labelPosition="top" />;
       }
       return (
-        <React.StrictMode>
-          <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />
-        </React.StrictMode>
+        <CallScreen token={token} userId={userId} displayName={displayName} callLocator={callLocator} />
       );
     }
     default:
