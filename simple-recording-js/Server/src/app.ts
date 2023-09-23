@@ -15,6 +15,7 @@ import userConfig from './routes/userConfig';
 import createThread from './routes/createThread';
 import addUser from './routes/addUser';
 import recordings from './routes/recordings';
+import eventgrid from './routes/eventgrid';
 
 const app = express();
 
@@ -65,6 +66,12 @@ app.use('/userConfig', cors(), userConfig);
  * purpose: Recording: start and stop recordings
  */
 app.use('/recordings', cors(), recordings);
+
+/**
+ * route: /userConfig
+ * purpose: Recording: receive EventGrid notifications
+ */
+app.use('/eventgrid', cors(), eventgrid);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
