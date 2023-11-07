@@ -79,6 +79,7 @@ const App = (): JSX.Element => {
       return (
         <HomeScreen
           joiningExistingCall={joiningExistingCall}
+          userId={userId}
           startCallHandler={async (callDetails) => {
             setDisplayName(callDetails.displayName);
 
@@ -87,6 +88,7 @@ const App = (): JSX.Element => {
 
             callLocator = callLocator || createGroupId();
 
+            console.log('callLocator', callLocator);
             setCallLocator(callLocator);
 
             // Update window URL to have a joinable link
@@ -132,6 +134,8 @@ const getJoinParams = (locator: CallAdapterLocator): string => {
     return '?teamsLink=' + encodeURIComponent(locator.meetingLink);
   } else if ('groupId' in locator) {
     return '?groupId=' + encodeURIComponent(locator.groupId);
+  } else if ('roomId' in locator) {
+    return '?roomId=' + encodeURIComponent(locator.roomId);
   }
 
   return 'unsupported'; // TODO

@@ -12,6 +12,7 @@ import issueToken from './routes/issueToken';
 import refreshToken from './routes/refreshToken';
 import recordings from './routes/recordings';
 import eventgrid from './routes/eventgrid';
+import rooms from './routes/rooms';
 
 const app = express();
 
@@ -45,6 +46,8 @@ app.use('/recordings', cors(), recordings);
  * purpose: Recording: receive EventGrid notifications
  */
 app.use('/eventgrid', cors(), eventgrid);
+
+app.use('/rooms', cors(), rooms);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

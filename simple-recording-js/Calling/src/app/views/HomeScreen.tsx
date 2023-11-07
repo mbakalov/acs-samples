@@ -23,11 +23,13 @@ import { ThemeSelector } from '../theming/ThemeSelector';
 import { localStorageAvailable } from '../utils/localStorage';
 import { getDisplayNameFromLocalStorage, saveDisplayNameToLocalStorage } from '../utils/localStorage';
 import { DisplayNameField } from './DisplayNameField';
-import { TeamsMeetingLinkLocator } from '@azure/communication-calling';
+import { RoomCallLocator, TeamsMeetingLinkLocator } from '@azure/communication-calling';
 
 import { CallAdapterLocator } from '@azure/communication-react';
+import { CommunicationUserIdentifier } from '@azure/communication-common';
 
 export interface HomeScreenProps {
+  userId?: CommunicationUserIdentifier;
   startCallHandler(callDetails: {
     displayName: string;
     callLocator?: CallAdapterLocator | TeamsMeetingLinkLocator;
@@ -43,7 +45,9 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
   const callOptions: IChoiceGroupOption[] = [
     { key: 'ACSCall', text: 'Start a call' },
 
-    { key: 'TeamsMeeting', text: 'Join a Teams meeting using ACS identity' }
+    { key: 'TeamsMeeting', text: 'Join a Teams meeting using ACS identity' },
+
+    {key: 'RoomsCall', text: 'Join a Rooms call'}
   ];
 
   // Get display name from local storage if available
@@ -52,11 +56,13 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
 
   const [chosenCallOption, setChosenCallOption] = useState<IChoiceGroupOption>(callOptions[0]);
   const [callLocator, setCallLocator] = useState<TeamsMeetingLinkLocator>();
+  const [roomsCallLocator, setRoomsCallLocator] = useState<RoomCallLocator>();
 
   const startGroupCall: boolean = chosenCallOption.key === 'ACSCall';
   const teamsCallChosen: boolean = chosenCallOption.key === 'TeamsMeeting';
+  const roomsCallChosen: boolean = chosenCallOption.key == 'RoomsCall';
 
-  const buttonEnabled = displayName && (startGroupCall || (teamsCallChosen && callLocator));
+  const buttonEnabled = displayName && (startGroupCall || (teamsCallChosen && callLocator) || (roomsCallChosen && roomsCallLocator));
 
   const showDisplayNameField = true;
 
@@ -95,6 +101,18 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 onChange={(_, newValue) => newValue && setCallLocator({ meetingLink: newValue })}
               />
             )}
+
+            {roomsCallChosen && (
+              <Stack>
+                <div>{props.userId?.communicationUserId}</div>
+                <TextField
+                  className={teamsItemStyle}
+                  iconProps={{ iconName: 'Link' }}
+                  placeholder={'Enter a RoomId'}
+                  onChange={(_, newValue) => newValue && setRoomsCallLocator({ roomId: newValue })}
+                />
+              </Stack>
+            )}
           </Stack>
           {showDisplayNameField && <DisplayNameField defaultName={displayName} setName={setDisplayName} />}
           <PrimaryButton
@@ -108,7 +126,7 @@ export const HomeScreen = (props: HomeScreenProps): JSX.Element => {
                 props.startCallHandler({
                   //TODO: This needs to be updated after we change arg types of TeamsCall
                   displayName: !displayName ? 'Teams UserName PlaceHolder' : displayName,
-                  callLocator: callLocator
+                  callLocator: roomsCallLocator // TODO: bring back support of teamsCallLocator
                 });
               }
             }}
